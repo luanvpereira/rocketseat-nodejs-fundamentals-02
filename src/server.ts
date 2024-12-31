@@ -1,31 +1,20 @@
 import fastify from 'fastify'
-import { knex } from './database'
+import cookie from '@fastify/cookie'
+
+import { env } from './env'
+
+import { transactionsRoute } from './routes/transactions'
 
 const app = fastify()
 
-app.get('/hello', async () => {
-  // const transaction = knex('transactions')
-  //   .insert({
-  //     id: crypto.randomUUID(),
-  //     title: 'Transação de teste.',
-  //     amount: 15,
-  //   })
-  //   .returning('*')
-
-  // return transaction
-
-  const transactions = knex('transactions')
-    .where({
-      amount: 15,
-    })
-    .select('*')
-
-  return transactions
+app.register(cookie)
+app.register(transactionsRoute, {
+  prefix: 'transactions',
 })
 
 app
   .listen({
-    port: 3333,
+    port: env.PORT,
   })
   .then(() => {
     console.log('HTTP Server Running')
