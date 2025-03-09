@@ -6,6 +6,7 @@ import { ZodError, type ZodIssue } from 'zod'
 import { usersRoute } from './routes/users'
 import { authRoute } from './routes/auth'
 import { mealsRoutes } from './routes/meals'
+import { meRoutes } from './routes/me'
 
 export const app = fastify()
 
@@ -19,6 +20,10 @@ app.register(authRoute, {
 
 app.register(mealsRoutes, {
   prefix: 'meals',
+})
+
+app.register(meRoutes, {
+  prefix: 'me',
 })
 
 app.setErrorHandler((error, request, reply) => {
