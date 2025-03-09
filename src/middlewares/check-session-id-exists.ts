@@ -1,4 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
+import jwt from 'jsonwebtoken'
+
+import { env } from '../env'
 
 export async function checkSessionExists(
   request: FastifyRequest,
@@ -10,5 +13,13 @@ export async function checkSessionExists(
     return reply.status(401).send({
       error: 'Unauthorized',
     })
+  }
+
+  const sessionData = jwt.verify(sessionId, env.AUTH_SECRET)
+
+  request.sessionData = sessionData as {
+    id: string
+    email: string
+    name: string
   }
 }

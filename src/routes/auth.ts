@@ -1,5 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
+import cookie from '@fastify/cookie'
+
 import bcrypt from 'bcrypt'
 
 import { knex } from '../database'
@@ -45,7 +47,12 @@ export async function authRoute(app: FastifyInstance) {
     try {
       const userToken = await signUser(restUser)
 
-      return reply.status(200).header('x-auth-token', userToken).send(restUser)
+      const sessionId = cookie.serialize('sessionId', userToken as string, {
+        maxAge: 60 * 60,
+        path: '/',
+      })
+
+      return reply.status(200).header('Set-Cookie', sessionId).send(restUser)
     } catch {
       return reply.status(401).send()
     }
